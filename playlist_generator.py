@@ -1,3 +1,4 @@
+import json
 from typing import List, Optional, Dict
 from ai_providers.protocols import AIProvider
 from spotify_client import SpotifyClient, SpotifyTrack
