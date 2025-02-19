@@ -100,7 +100,7 @@ async def get_ai_response(prompt, config):
             messages=[
                 {
                     "role": "user",
-                    "content": f"Create a playlist based on this description: {prompt}. Respond ONLY in JSON format, without any additional text before or after. Format: {{\"playlist_name\": \"name\", \"description\": \"description\", \"tracks\": [{{\"artist\": \"artist\", \"title\": \"title\"}}]}}"
+                    "content": f"Create a playlist based on this description, at least 15 songs, unless specified otherwise: {prompt}. Respond ONLY in JSON format, without any additional text before or after. Format: {{\"playlist_name\": \"name\", \"description\": \"description\", \"tracks\": [{{\"artist\": \"artist\", \"title\": \"title\"}}]}}"
                 }
             ]
         )
