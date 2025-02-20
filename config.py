@@ -24,13 +24,10 @@ class AppConfig(TypedDict):
 SCRIPT_DIR = Path(__file__).parent.absolute()
 CONFIG_DIR = SCRIPT_DIR / 'config'
 CONFIG_FILE = CONFIG_DIR / 'config.ini'
-LOG_DIR = CONFIG_DIR / 'logs'
-ERROR_LOG_FILE = LOG_DIR / f'errors_{datetime.now().strftime("%Y%m%d")}.log'
 
 def setup_directories() -> None:
     """Create necessary directories if they don't exist."""
     CONFIG_DIR.mkdir(parents=True, exist_ok=True)
-    LOG_DIR.mkdir(parents=True, exist_ok=True)
 
 def create_default_config() -> None:
     """Create default configuration file."""

@@ -1,5 +1,5 @@
 import click
-from config import setup_directories, load_config, CONFIG_FILE, LOG_DIR
+from config import setup_directories, load_config, CONFIG_FILE
 from spotify_client import SpotifyClient
 from ai_providers import AIProviderFactory
 from playlist_generator import PlaylistGenerator
@@ -22,7 +22,6 @@ def configure(config):
         click.edit(filename=str(CONFIG_FILE))
     else:
         console.print(f"[green]Configuration file is located at: {CONFIG_FILE}")
-        console.print(f"[yellow]Error logs are located at: {LOG_DIR}")
 
 @cli.command()
 @click.argument('prompt')
