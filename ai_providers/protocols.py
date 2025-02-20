@@ -1,4 +1,4 @@
-from typing import Protocol, TypedDict, Any, runtime_checkable, Optional, Union
+from typing import Protocol, TypedDict, Any, runtime_checkable, Optional
 
 class Track(TypedDict):
     artist: str

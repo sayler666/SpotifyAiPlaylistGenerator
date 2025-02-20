@@ -2,7 +2,6 @@ from dataclasses import dataclass
 from typing import List, Optional
 import spotipy
 from spotipy.oauth2 import SpotifyOAuth
-from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
 from rich.console import Console
 from config import SpotifyConfig
 

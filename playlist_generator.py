@@ -1,9 +1,9 @@
 import json
 import os
 import sys
-from typing import List, Optional, Dict
+from typing import Optional
 from ai_providers.protocols import AIProvider
-from spotify_client import SpotifyClient, SpotifyTrack
+from spotify_client import SpotifyClient
 from rich.progress import Progress, SpinnerColumn, TextColumn, BarColumn, TimeRemainingColumn
 from rich.console import Console
 
@@ -84,7 +84,9 @@ class PlaylistGenerator:
                         console.print(f"[dim]Browser URL: {spotify_url}")
                         console.print(f"[dim]Spotify URI: {spotify_uri}")
                     except Exception as e:
-                        console.print(f"\n[green]Created playlist: {spotify_url}")
+                        console.print(f"[red]Error opening playlist: {str(e)}[/red]")
+                        if debug:
+                            console.print(f"\n[cyan]Platform: {sys.platform}[/cyan]")
                         
                     if not_found:
                         console.print("\n[yellow]The following tracks were not found:")

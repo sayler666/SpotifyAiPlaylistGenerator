@@ -1,8 +1,7 @@
 from typing import Optional
-import json
+import requests
 from rich.console import Console
 from rich.panel import Panel
-from anthropic import Client as AnthropicClient
 from .protocols import AIProvider, PlaylistData
 from .prompt_builder import PlaylistPromptBuilder
 from .response_parser import PlaylistJSONParser
@@ -11,8 +10,8 @@ console = Console()
 
 class AnthropicProvider(AIProvider):
     def __init__(self, api_key: str) -> None:
-        self.client = AnthropicClient(api_key=api_key)
         self.api_key = api_key
+        self.base_url = "https://api.anthropic.com/v1/messages"
         self._available_models = [
             "claude-3-haiku-20240307",
             "claude-3-opus-20240229",
@@ -38,32 +37,55 @@ class AnthropicProvider(AIProvider):
     
     def generate_playlist(self, prompt: str) -> Optional[PlaylistData]:
         try:
-            # type: ignore
-            message = self.client.messages.create(
-                model="claude-3-opus-20240229",
-                max_tokens=1024,
-                messages=[
+            headers = {
+                "x-api-key": self.api_key,
+                "anthropic-version": "2023-06-01",
+                "content-type": "application/json",
+            }
+            
+            data = {
+                "model": self._model,
+                "max_tokens": 1024,
+                "messages": [
                     {
                         "role": "user",
                         "content": self.prompt_builder.build_prompt(prompt)
                     }
                 ]
+            }
+            
+            response = requests.post(
+                self.base_url,
+                headers=headers,
+                json=data,
+                timeout=30
             )
             
-            response_text = message.content  # type: ignore
-            # Handle different response formats
-            if isinstance(response_text, list):
-                response_text = response_text[0].text.strip()  # type: ignore
-            elif hasattr(message, 'text'):
-                response_text = message.text.strip()  # type: ignore
-            elif isinstance(response_text, str):
-                response_text = response_text.strip()
-            else:
-                console.print("[yellow]Warning: Unexpected response format from Claude API")
-                response_text = str(message)
-
-            return json.loads(response_text)
-
+            # Handle HTTP errors
+            response.raise_for_status()
+            
+            # Parse response
+            result = response.json()
+            
+            if 'content' not in result:
+                raise ValueError("No content in response")
+                
+            content = result['content']
+            if not isinstance(content, list) or not content:
+                raise ValueError("Invalid content format in response")
+                
+            response_text = content[0].get('text', '').strip()
+            if not response_text:
+                raise ValueError("No text in response content")
+                
+            return self.response_parser.parse_response(response_text)
+            
+        except requests.exceptions.Timeout:
+            console.print(Panel("Request timed out", title="[red]Error[/red]", border_style="red"))
+            return None
+        except requests.exceptions.RequestException as e:
+            console.print(Panel(str(e), title="[red]HTTP Error[/red]", border_style="red"))
+            return None
         except Exception as e:
-            console.print(Panel(e, title=f"[red]Claude API[/red]", border_style="red"))
+            console.print(Panel(str(e), title="[red]Claude API[/red]", border_style="red"))
             return None
