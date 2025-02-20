@@ -27,25 +27,21 @@ def configure(config):
 @click.argument('prompt')
 @click.option('--private', is_flag=True, help='Create a private playlist.')
 @click.option('--debug', is_flag=True, help='Display detailed debug information.')
-@click.option('--ai-provider', help='Override AI provider (anthropic)')
-@click.option('--model', help='Override AI model')
-def create(prompt: str, private: bool, debug: bool, ai_provider: Optional[str], model: Optional[str]):
+def create(prompt: str, private: bool, debug: bool):
     """Create a playlist based on the provided description."""
     setup_directories()
     config = load_config()
     
-    # Get AI provider from config or command line
-    provider_type = ai_provider or config['ai']['provider']
-    api_key = config['ai']['api_key']
+    provider_type = config.ai.provider
+    api_key = config.ai.api_key
     
     try:
         ai_provider = AIProviderFactory.create_provider(provider_type, api_key)
-        if model:
-            ai_provider.set_model(model)
-        elif config['ai']['model']:
-            ai_provider.set_model(config['ai']['model'])
+        
+        if config.ai.model:
+            ai_provider.set_model(config.ai.model)
             
-        spotify_client = SpotifyClient(config['spotify'])
+        spotify_client = SpotifyClient(config.spotify)
         generator = PlaylistGenerator(spotify_client, ai_provider)
 
         generator.generate(prompt, private, debug)

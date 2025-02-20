@@ -16,9 +16,9 @@ class SpotifyTrack:
 class SpotifyClient:
     def __init__(self, config: SpotifyConfig):
         self.sp = spotipy.Spotify(auth_manager=SpotifyOAuth(
-            client_id=config['client_id'],
-            client_secret=config['client_secret'],
-            redirect_uri=config['redirect_uri'],
+            client_id=config.client_id,
+            client_secret=config.client_secret,
+            redirect_uri=config.redirect_uri,
             scope="playlist-modify-public playlist-modify-private"
         ))
         self.user_id = self.sp.current_user()["id"]

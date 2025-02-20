@@ -1,23 +1,25 @@
+from dataclasses import dataclass
 from pathlib import Path
-from typing import TypedDict
 import configparser
 from rich.console import Console
 import sys
-from datetime import datetime
 
 console = Console()
 
-class SpotifyConfig(TypedDict):
+@dataclass
+class SpotifyConfig:
     client_id: str
     client_secret: str
     redirect_uri: str
 
-class AIConfig(TypedDict):
+@dataclass
+class AIConfig:
     provider: str
     api_key: str
     model: str
 
-class AppConfig(TypedDict):
+@dataclass
+class AppConfig:
     spotify: SpotifyConfig
     ai: AIConfig
 
@@ -56,16 +58,21 @@ def load_config() -> AppConfig:
         
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE, encoding='utf-8')
+
+    try:
+        return AppConfig(
+            spotify=SpotifyConfig(
+                client_id=config['spotify']['client_id'],
+                client_secret=config['spotify']['client_secret'],
+                redirect_uri=config['spotify']['redirect_uri']
+            ),
+            ai=AIConfig(
+                provider=config['ai']['provider'],
+                api_key=config['ai']['api_key'],
+                model=config['ai'].get('model', '')
+            )
+        )
+    except Exception as e:  
+        console.print(f"[red]Error in configuration file: {str(e)}")
+        sys.exit(1)
     
-    return {
-        'spotify': {
-            'client_id': config['spotify']['client_id'],
-            'client_secret': config['spotify']['client_secret'],
-            'redirect_uri': config['spotify']['redirect_uri']
-        },
-        'ai': {
-            'provider': config['ai']['provider'],
-            'api_key': config['ai']['api_key'],
-            'model': config['ai'].get('model', '')
-        }
-    }
