@@ -1,23 +1,21 @@
-# AI Spotify Playlist Generator
+# Spotify Muse (playlist generator)
 
-A command-line tool that uses AI (for now only Claude) to generate personalized Spotify playlists based on text descriptions. Simply describe the kind of playlist you want, and the tool will create it automatically in your Spotify account.
+A command-line tool that uses AI to generate personalized Spotify playlists based on text descriptions. Simply describe the kind of playlist you want, and the tool will create it in your Spotify account.
 
 ## Features
 
 - Generate Spotify playlists using natural language descriptions
-- AI-powered track selection using Claude (more LLM to be implemented)
+- AI-powered track selection using Anthropic Claude (more LLMs incomming)
 - Automatic playlist creation in your Spotify account
 - Support for private playlists
 - Debug mode for troubleshooting
-- Configurable AI models and providers
-- Rich console output with progress indicators
+- Configurable AI providers and models
 
 ## Prerequisites
 
 - Python 3.8+
-- Spotify Developer Account
+- Spotify Developer Account API key
 - Claude API key
-- Spotify Premium Account (for some features)
 
 ## Installation
 
@@ -33,7 +31,7 @@ Before using the tool, you need to set up your configuration:
 
 1. Run the configure command:
 ```bash
-python -m cli configure
+python -m spotify_muse configure
 ```
 
 2. Edit the generated `config/config.ini` file with your credentials:
@@ -67,24 +65,24 @@ model = claude-3-haiku-20240307  # optional
 Create a playlist by providing a description:
 
 ```bash
-python -m cli create "A relaxing indie folk playlist perfect for a rainy Sunday morning"
+python -m spotify_muse create "A relaxing indie folk playlist perfect for a rainy Sunday morning"
 ```
 
 ### Advanced Options
 
 Create a private playlist:
 ```bash
-python -m cli create --private "Epic workout mix with high-energy electronic music"
+python -m spotify_muse create --private "Epic workout mix with high-energy electronic music"
 ```
 
 Use debug mode for detailed information:
 ```bash
-python -m cli create --debug "90s hip hop classics"
+python -m spotify_muse create --debug "90s hip hop classics"
 ```
 
 Override AI provider or model:
 ```bash
-python -m cli create --ai-provider anthropic --model claude-3-opus-20240229 "Jazz fusion from the 70s"
+python -m spotify_muse create --ai-provider anthropic --model claude-3-opus-20240229 "Jazz fusion from the 70s"
 ```
 
 ## How It Works

@@ -1,5 +1,6 @@
 from .protocols import PromptBuilder
 
+
 class PlaylistPromptBuilder(PromptBuilder):
     def build_prompt(self, user_input: str) -> str:
         return f"""Create a playlist based on this description: {user_input}. 
