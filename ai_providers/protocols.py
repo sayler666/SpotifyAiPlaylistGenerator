@@ -1,4 +1,4 @@
-from typing import Protocol, TypedDict, Any, runtime_checkable, Optional
+from typing import Protocol, TypedDict, runtime_checkable
 
 
 class Track(TypedDict):
@@ -25,7 +25,7 @@ class PromptBuilder(Protocol):
 class JSONResponseParser(Protocol):
     """Protocol for parsing JSON responses"""
 
-    def parse_response(self, response_text: str) -> Optional[Any]:
+    def parse_response(self, response_text: str) -> PlaylistData | None:
         """Parse response text into structured data"""
         ...
 
@@ -34,7 +34,7 @@ class JSONResponseParser(Protocol):
 class AIProvider(Protocol):
     """Protocol defining interface for AI providers"""
 
-    def generate_playlist(self, prompt: str) -> Optional[PlaylistData]:
+    def generate_playlist(self, prompt: str) -> PlaylistData | None:
         """Generate a playlist based on the provided prompt"""
         ...
 

@@ -1,4 +1,3 @@
-from typing import Optional
 import requests
 from rich.console import Console
 from rich.panel import Panel
@@ -10,9 +9,15 @@ console = Console()
 
 
 class AnthropicProvider(AIProvider):
+    BASE_URL = "https://api.anthropic.com/v1/messages"
+    API_VERSION = "2023-06-01"
+    MAX_TOKENS = 1024
+    DEFAULT_TIMEOUT = 30
+    MIN_PROMPT_LENGTH = 10
+    MAX_PROMPT_LENGTH = 300
+
     def __init__(self, api_key: str) -> None:
         self.api_key = api_key
-        self.base_url = "https://api.anthropic.com/v1/messages"
         self._available_models = [
             "claude-3-haiku-20240307",
             "claude-3-opus-20240229",
@@ -38,34 +43,17 @@ class AnthropicProvider(AIProvider):
     def get_available_models(self) -> list[str]:
         return self._available_models.copy()
 
-    def generate_playlist(self, prompt: str) -> Optional[PlaylistData]:
-        try:
-            headers = {
-                "x-api-key": self.api_key,
-                "anthropic-version": "2023-06-01",
-                "content-type": "application/json",
-            }
+    def generate_playlist(self, prompt: str) -> PlaylistData | None:
+        if not prompt or not prompt.strip():
+            raise ValueError("Prompt cannot be empty")
 
-            data = {
-                "model": self._model,
-                "max_tokens": 1024,
-                "messages": [
-                    {
-                        "role": "user",
-                        "content": self.prompt_builder.build_prompt(prompt),
-                    }
-                ],
-            }
-
-            response = requests.post(
-                self.base_url, headers=headers, json=data, timeout=30
+        if len(prompt) not in range(self.MIN_PROMPT_LENGTH, self.MAX_PROMPT_LENGTH + 1):
+            raise ValueError(
+                f"Prompt length must be between {self.MIN_PROMPT_LENGTH} and {self.MAX_PROMPT_LENGTH} characters"
             )
 
-            # Handle HTTP errors
-            response.raise_for_status()
-
-            # Parse response
-            result = response.json()
+        try:
+            result = self._make_api_request(prompt)
 
             if "content" not in result:
                 raise ValueError("No content in response")
@@ -95,3 +83,27 @@ class AnthropicProvider(AIProvider):
                 Panel(str(e), title="[red]Claude API[/red]", border_style="red")
             )
             return None
+
+    def _make_api_request(self, prompt: str) -> dict:
+        headers = {
+            "x-api-key": self.api_key,
+            "anthropic-version": self.API_VERSION,
+            "content-type": "application/json",
+        }
+
+        data = {
+            "model": self._model,
+            "max_tokens": self.MAX_TOKENS,
+            "messages": [
+                {
+                    "role": "user",
+                    "content": self.prompt_builder.build_prompt(prompt),
+                }
+            ],
+        }
+
+        response = requests.post(
+            self.BASE_URL, headers=headers, json=data, timeout=self.DEFAULT_TIMEOUT
+        )
+        response.raise_for_status()
+        return response.json()

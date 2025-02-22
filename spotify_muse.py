@@ -45,9 +45,9 @@ def create(prompt: str, private: bool, debug: bool):
             ai_provider.set_model(config.ai.model)
 
         spotify_client = SpotifyClient(config.spotify)
-        generator = PlaylistGenerator(spotify_client, ai_provider)
+        playlist_generator = PlaylistGenerator(spotify_client, ai_provider)
 
-        generator.generate(prompt, private, debug)
+        playlist_generator.generate(prompt, private, debug)
 
     except Exception as e:
         console.print(f"[red]Error: {str(e)}")

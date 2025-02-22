@@ -29,7 +29,7 @@ class SpotifyClient:
 
     def create_playlist(
         self, name: str, description: str = "", public: bool = True
-    ) -> Optional[dict]:
+    ) -> dict | None:
         try:
             return self.sp.user_playlist_create(
                 user=self.user_id, name=name, public=public, description=description
@@ -38,7 +38,7 @@ class SpotifyClient:
             console.print(f"[red]Error creating playlist: {str(e)}")
             return None
 
-    def search_track(self, artist: str, title: str) -> Optional[SpotifyTrack]:
+    def search_track(self, artist: str, title: str) -> SpotifyTrack | None:
         try:
             query = f"artist:{artist} track:{title}"
             results = self.sp.search(q=query, limit=1, type="track")

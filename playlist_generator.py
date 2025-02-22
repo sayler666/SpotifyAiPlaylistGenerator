@@ -23,14 +23,14 @@ class PlaylistGenerator:
 
     def generate(
         self, prompt: str, private: bool = False, debug: bool = False
-    ) -> Optional[str]:
+    ) -> str | None:
         """Generate playlist and return its URL."""
         with console.status(
             f"[bold green]Generating playlist using {self.ai.get_name()} ({self.ai.get_model()})..."
         ):
             # Get AI suggestions
             playlist_data = self.ai.generate_playlist(prompt)
-            if not playlist_data:
+            if playlist_data is None:
                 return None
 
             if debug:
@@ -44,7 +44,7 @@ class PlaylistGenerator:
                 public=not private,
             )
 
-            if not playlist:
+            if playlist is None:
                 console.print("[red]Failed to create playlist.")
                 return None
 
@@ -96,9 +96,7 @@ class PlaylistGenerator:
                         elif sys.platform.startswith("linux"):
                             os.system(f"xdg-open {spotify_uri}")
 
-                        console.print(
-                            f"\n[green]Created playlist and opened in Spotify!"
-                        )
+                        console.print(f"\n[green]Created playlist and opened in Spotify!")
                         console.print(f"[dim]Browser URL: {spotify_url}")
                         console.print(f"[dim]Spotify URI: {spotify_uri}")
                     except Exception as e:

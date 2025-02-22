@@ -7,7 +7,7 @@ console = Console()
 
 
 class PlaylistJSONParser(JSONResponseParser):
-    def parse_response(self, response_text: str) -> Optional[PlaylistData]:
+    def parse_response(self, response_text: str) -> PlaylistData | None:
         try:
             data = json.loads(response_text.strip())
             # Basic validation of required fields
