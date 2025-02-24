@@ -1,10 +1,14 @@
 from typing import Type, Dict
 from .protocols import AIProvider
 from .anthropic_provider import AnthropicProvider
+from .gpt_provider import GptProvider
 
 
 class AIProviderFactory:
-    _providers: Dict[str, Type[AIProvider]] = {"anthropic": AnthropicProvider}
+    _providers: Dict[str, Type[AIProvider]] = {
+        "anthropic": AnthropicProvider,
+        "gpt": GptProvider,   
+    }
 
     @classmethod
     def register_provider(cls, name: str, provider_class: Type[AIProvider]) -> None:
