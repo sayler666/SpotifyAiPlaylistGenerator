@@ -13,16 +13,27 @@ A command-line tool that uses AI to generate personalized Spotify playlists base
 
 ## Prerequisites
 
-- Python 3.8+
+- pyenv (Python version management)
+- Poetry (Package management)
+- Python 3.11+
 - Spotify Developer Account API key
 - Claude API key
 
 ## Installation
 
 1. Clone the repository
-2. Install dependencies:
+2. Install Python using pyenv:
 ```bash
-pip install -r requirements.txt
+pyenv install 3.12.0
+pyenv local 3.12.0
+```
+3. Install Poetry:
+```bash
+python -m pip install poetry
+```
+4. Install dependencies:
+```bash
+poetry install
 ```
 
 ## Configuration
